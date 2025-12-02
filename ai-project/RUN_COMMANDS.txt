@@ -1,0 +1,104 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                   HOW TO RUN YOUR APPLICATION                         ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+
+📁 NEW PROJECT STRUCTURE
+════════════════════════════════════════════════════════════════════════
+
+ai-project/
+├── app/                 # Backend (FastAPI)
+├── prj/                 # Frontend (React)
+├── venv/                # Virtual environment
+├── app.db               # Database
+├── requirements.txt     # Backend dependencies
+├── start.bat            # One-click startup
+└── README.md            # Documentation
+
+
+🚀 OPTION 1: ONE-CLICK START (EASIEST)
+════════════════════════════════════════════════════════════════════════
+
+From ai-project folder:
+  
+  Double-click: start.bat
+
+
+🎯 OPTION 2: MANUAL START (TWO TERMINALS)
+════════════════════════════════════════════════════════════════════════
+
+TERMINAL 1 - BACKEND:
+─────────────────────
+
+cd ai-project
+venv\Scripts\activate
+uvicorn app.main:app --reload
+
+✅ Backend ready at: http://localhost:8000
+
+
+TERMINAL 2 - FRONTEND:
+──────────────────────
+
+cd ai-project\frontend
+npm run dev
+
+✅ Frontend ready at: http://localhost:3000
+
+
+📋 VERIFY IT WORKS
+════════════════════════════════════════════════════════════════════════
+
+1. Backend:  http://localhost:8000
+   Should show: {"message":"AI Shopping Assistant API is running"}
+
+2. API Docs: http://localhost:8000/docs
+   Should show: Swagger UI
+
+3. Frontend: http://localhost:3000
+   Should show: Your React application
+
+
+🛑 STOP THE APPLICATION
+════════════════════════════════════════════════════════════════════════
+
+In each terminal window, press: CTRL + C
+
+
+📦 PUSH TO GITHUB
+════════════════════════════════════════════════════════════════════════
+
+cd ai-project
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin YOUR_GITHUB_REPO_URL
+git push -u origin main
+
+
+⚠️  NOTE: Database file (app.db) is included in .gitignore
+    If you want to include it, edit .gitignore
+
+
+🔍 COMMANDS AT A GLANCE
+════════════════════════════════════════════════════════════════════════
+
+Start Backend:   cd ai-project
+                 venv\Scripts\activate
+                 uvicorn app.main:app --reload
+
+Start Frontend:  cd ai-project\frontend
+                 npm run dev
+
+View Database:   cd ai-project
+                 python view_database.py (if you moved this file)
+
+Stop Servers:    CTRL + C in each terminal
+
+
+✅ ALL FILES ARE NOW IN ai-project DIRECTORY
+    Ready to push to GitHub!
+
+
+═══════════════════════════════════════════════════════════════════════
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend-Backend Integration Test</title>
+    <style>
+        body { font-family: Arial; padding: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        button { background: #4CAF50; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; margin: 10px 5px; }
+        button:hover { background: #45a049; }
+        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 6px; white-space: pre-wrap; font-family: monospace; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Frontend-Backend Integration Test</h1>
+        <p>Test your React frontend connection to FastAPI backend</p>
+        
+        <button onclick="testSignup()">1. Test Signup</button>
+        <button onclick="testLogin()">2. Test Login</button>
+        <button onclick="testProtectedRoute()">3. Test Protected Route</button>
+        <button onclick="testAllUsers()">4. Test Admin Endpoint</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let currentToken = null;
+
+        function showResult(message, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = isSuccess ? 'result success' : 'result error';
+        }
+
+        async function testSignup() {
+            const randomNum = Math.floor(Math.random() * 10000);
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: `testuser${randomNum}`,
+                        email: `test${randomNum}@example.com`,
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ SIGNUP SUCCESS!\n\nUser created:\n${JSON.stringify(data, null, 2)}`);
+                } else {
+                    showResult(`⚠️ SIGNUP RESPONSE:\n${JSON.stringify(data, null, 2)}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ ERROR: ${error.message}\n\nMake sure backend is running on port 8000!`, false);
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.access_token;
+                    showResult(`✅ LOGIN SUCCESS!\n\nToken received:\n${data.access_token.substring(0, 50)}...\n\nToken saved! Now try "Test Protected Route"`);
+                } else {
+                    showResult(`⚠️ LOGIN FAILED:\n${JSON.stringify(data, null, 2)}\n\nNote: Use credentials from a user you created in Swagger UI or Test Signup first!`, false);
+                }
+            } catch (error) {
+                showResult(`❌ ERROR: ${error.message}`, false);
+            }
+        }
+
+        async function testProtectedRoute() {
+            if (!currentToken) {
+                showResult('⚠️ Please login first to get a token!', false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    method: 'GET',
+                    headers: { 
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ PROTECTED ROUTE SUCCESS!\n\nCurrent user:\n${JSON.stringify(data, null, 2)}`);
+                } else {
+                    showResult(`❌ AUTHORIZATION FAILED:\n${JSON.stringify(data, null, 2)}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ ERROR: ${error.message}`, false);
+            }
+        }
+
+        async function testAllUsers() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/users`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ ADMIN ENDPOINT SUCCESS!\n\nTotal users: ${data.length}\n\n${JSON.stringify(data, null, 2)}`);
+                } else {
+                    showResult(`❌ FAILED:\n${JSON.stringify(data, null, 2)}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ ERROR: ${error.message}`, false);
+            }
+        }
+
+        // Test connection on load
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                showResult(`✅ CONNECTION TEST PASSED!\n\nBackend says: "${data.message}"\n\nClick buttons above to test each endpoint.`);
+            } catch (error) {
+                showResult(`❌ BACKEND NOT REACHABLE!\n\nMake sure the FastAPI server is running on port 8000.\n\nError: ${error.message}`, false);
+            }
+        };
+    </script>
+</body>
+</html>
+

@@ -39,8 +39,7 @@ function UserMenu() {
 
   const handleProfileClick = () => {
     setIsOpen(false)
-    // TODO: Navigate to profile page when it's implemented
-    alert('Profile page will be available soon!')
+    window.location.hash = 'profile'
   }
 
   return (

@@ -3761,6 +3761,695 @@
   }
 }
 
+/* ===== USER PROFILE PAGE STYLES ===== */
+
+.user-profile-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f9fafb;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.user-profile-content {
+  flex: 1;
+  padding: 60px 32px;
+}
+
+.user-profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.user-profile-header {
+  margin-bottom: 32px;
+}
+
+.user-profile-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.user-profile-subtitle {
+  font-size: 1.05rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Profile Cards */
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.profile-card-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profile-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.profile-card-description {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.profile-card-body {
+  padding: 24px 32px;
+}
+
+.profile-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+/* Allergies Section */
+.allergies-input-wrapper {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  transition: all 0.2s;
+}
+
+.allergies-input-wrapper:focus-within {
+  border-color: #16a34a;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.allergies-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.allergy-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #d4f4dd;
+  color: #166534;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.allergy-tag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+  border-radius: 3px;
+}
+
+.allergy-tag-remove svg {
+  width: 14px;
+  height: 14px;
+  stroke: #166534;
+}
+
+.allergy-tag-remove:hover {
+  background: #a8e6c1;
+}
+
+.allergy-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 6px 4px;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  flex: 1;
+  min-width: 150px;
+}
+
+.allergy-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Dietary Goals Section */
+.dietary-goals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.dietary-goal-pill {
+  padding: 10px 24px;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 2px solid transparent;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dietary-goal-pill:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.dietary-goal-pill.active {
+  background: #d4f4dd;
+  color: #166534;
+  border-color: #d4f4dd;
+}
+
+/* Notification Preferences */
+.notification-options {
+  margin-bottom: 24px;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-label {
+  font-size: 1rem;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.notification-toggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.notification-toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke: white;
+}
+
+.notification-toggle:hover {
+  border-color: #16a34a;
+  transform: scale(1.1);
+}
+
+.notification-toggle.active {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+/* Card Actions */
+.profile-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-save {
+  padding: 12px 28px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-save:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+/* User Profile Page Responsive */
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+  .user-profile-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Desktop */
+@media (max-width: 1200px) {
+  .user-profile-title {
+    font-size: 2.25rem;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Laptop */
+@media (max-width: 1024px) {
+  .user-profile-content {
+    padding: 48px 24px;
+  }
+  
+  .user-profile-title {
+    font-size: 2.1rem;
+  }
+  
+  .profile-card-header {
+    padding: 20px 28px;
+  }
+  
+  .profile-card-body {
+    padding: 20px 28px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 968px) {
+  .user-profile-title {
+    font-size: 2rem;
+  }
+  
+  .user-profile-header {
+    margin-bottom: 28px;
+  }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+  .user-profile-content {
+    padding: 40px 20px;
+  }
+  
+  .user-profile-header {
+    margin-bottom: 24px;
+  }
+  
+  .user-profile-title {
+    font-size: 1.85rem;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 1rem;
+  }
+  
+  .profile-card-header {
+    padding: 18px 24px;
+  }
+  
+  .profile-card-body {
+    padding: 18px 24px;
+  }
+  
+  .profile-card-title {
+    font-size: 1.15rem;
+  }
+  
+  .profile-card-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 640px) {
+  .user-profile-content {
+    padding: 32px 16px;
+  }
+  
+  .user-profile-header {
+    margin-bottom: 20px;
+  }
+  
+  .user-profile-title {
+    font-size: 1.75rem;
+    margin-bottom: 6px;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .profile-card {
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-card-header {
+    padding: 16px 20px;
+  }
+  
+  .profile-card-body {
+    padding: 16px 20px;
+  }
+  
+  .profile-card-title {
+    font-size: 1.1rem;
+  }
+  
+  .profile-card-description {
+    font-size: 0.875rem;
+  }
+  
+  .profile-label {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .allergies-input-wrapper {
+    padding: 8px 10px;
+  }
+  
+  .allergies-tags {
+    gap: 6px;
+  }
+  
+  .allergy-tag {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .allergy-input {
+    font-size: 0.875rem;
+    min-width: 120px;
+  }
+  
+  .dietary-goals-grid {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .dietary-goal-pill {
+    padding: 9px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .notification-item {
+    padding: 14px 0;
+  }
+  
+  .notification-label {
+    font-size: 0.95rem;
+  }
+  
+  .notification-toggle {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .notification-toggle svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .btn-save {
+    padding: 11px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+  .user-profile-content {
+    padding: 24px 12px;
+  }
+  
+  .user-profile-header {
+    margin-bottom: 16px;
+  }
+  
+  .user-profile-title {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .profile-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .profile-card-header {
+    padding: 14px 16px;
+  }
+  
+  .profile-card-body {
+    padding: 14px 16px;
+  }
+  
+  .profile-card-title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  
+  .profile-card-description {
+    font-size: 0.85rem;
+  }
+  
+  .profile-label {
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+  }
+  
+  .allergies-input-wrapper {
+    padding: 6px 8px;
+    margin-bottom: 16px;
+  }
+  
+  .allergies-tags {
+    gap: 6px;
+  }
+  
+  .allergy-tag {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+  
+  .allergy-tag-remove {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .allergy-tag-remove svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .allergy-input {
+    font-size: 0.85rem;
+    min-width: 100px;
+    padding: 5px 4px;
+  }
+  
+  .dietary-goals-grid {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .dietary-goal-pill {
+    padding: 8px 18px;
+    font-size: 0.875rem;
+  }
+  
+  .notification-options {
+    margin-bottom: 16px;
+  }
+  
+  .notification-item {
+    padding: 12px 0;
+  }
+  
+  .notification-label {
+    font-size: 0.9rem;
+  }
+  
+  .notification-toggle {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .notification-toggle svg {
+    width: 13px;
+    height: 13px;
+  }
+  
+  .profile-card-actions {
+    justify-content: stretch;
+  }
+  
+  .btn-save {
+    width: 100%;
+    padding: 11px 20px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 375px) {
+  .user-profile-content {
+    padding: 20px 10px;
+  }
+  
+  .user-profile-title {
+    font-size: 1.35rem;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .profile-card-header {
+    padding: 12px 14px;
+  }
+  
+  .profile-card-body {
+    padding: 12px 14px;
+  }
+  
+  .profile-card-title {
+    font-size: 0.95rem;
+  }
+  
+  .profile-card-description {
+    font-size: 0.8rem;
+  }
+  
+  .profile-label {
+    font-size: 0.85rem;
+  }
+  
+  .allergy-tag {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .allergy-input {
+    font-size: 0.8rem;
+    min-width: 90px;
+  }
+  
+  .dietary-goal-pill {
+    padding: 7px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .notification-label {
+    font-size: 0.875rem;
+  }
+  
+  .btn-save {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Very Small Mobile */
+@media (max-width: 320px) {
+  .user-profile-title {
+    font-size: 1.25rem;
+  }
+  
+  .user-profile-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .profile-card-header {
+    padding: 10px 12px;
+  }
+  
+  .profile-card-body {
+    padding: 10px 12px;
+  }
+  
+  .profile-card-title {
+    font-size: 0.9rem;
+  }
+  
+  .profile-card-description {
+    font-size: 0.75rem;
+  }
+  
+  .allergy-tag {
+    font-size: 0.7rem;
+  }
+  
+  .allergy-input {
+    font-size: 0.75rem;
+  }
+  
+  .dietary-goal-pill {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
+  
+  .notification-label {
+    font-size: 0.85rem;
+  }
+  
+  .btn-save {
+    font-size: 0.8rem;
+  }
+}
+
 /* ===== USER MENU COMPONENT STYLES ===== */
 
 .user-menu-container {

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import UserMenu from './UserMenu'
 
 function ShoppingList() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -64,9 +65,7 @@ function ShoppingList() {
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
               </svg>
             </button>
-            <div className="user-avatar">
-              <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=100&auto=format&fit=crop" alt="User" />
-            </div>
+            <UserMenu />
           </div>
 
           {/* Mobile Hamburger Menu */}

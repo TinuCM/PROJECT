@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import UserMenu from './UserMenu'
 
 function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isAuthenticated, user } = useAuth()
 
   return (
     <div className="landing-page">
@@ -24,8 +27,14 @@ function Landing() {
           </div>
           
           <div className="nav-buttons">
-            <a href="/login" className="nav-btn-login">Log In</a>
-            <a href="/signup" className="nav-btn-signup">Sign Up</a>
+            {isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <>
+                <a href="/login" className="nav-btn-login">Log In</a>
+                <a href="/signup" className="nav-btn-signup">Sign Up</a>
+              </>
+            )}
           </div>
 
           {/* Mobile Hamburger Menu */}
@@ -59,8 +68,16 @@ function Landing() {
             <a href="/inventory" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Inventory</a>
             <a href="/shopping-list" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Shopping List</a>
             <div className="mobile-menu-divider"></div>
-            <a href="/login" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Log In</a>
-            <a href="/signup" className="mobile-menu-link highlight" onClick={() => setMobileMenuOpen(false)}>Sign Up</a>
+            {isAuthenticated ? (
+              <div className="mobile-menu-user-section">
+                <UserMenu />
+              </div>
+            ) : (
+              <>
+                <a href="/login" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Log In</a>
+                <a href="/signup" className="mobile-menu-link highlight" onClick={() => setMobileMenuOpen(false)}>Sign Up</a>
+              </>
+            )}
           </div>
         )}
       </nav>
@@ -70,15 +87,26 @@ function Landing() {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="hero-title">
-              The future of your kitchen is here.
+              {isAuthenticated ? `Welcome back, ${user?.username || 'User'}!` : 'The future of your kitchen is here.'}
             </h1>
             <p className="hero-subtitle">
-              Let AI manage your inventory, plan your meals, and handle your shopping. 
-              Spend less time worrying and more time enjoying delicious food.
+              {isAuthenticated 
+                ? 'Your smart kitchen assistant is ready to help you plan meals, manage inventory, and create shopping lists.'
+                : 'Let AI manage your inventory, plan your meals, and handle your shopping. Spend less time worrying and more time enjoying delicious food.'
+              }
             </p>
             <div className="hero-buttons">
-              <a href="/signup" className="btn-primary">Get Started Free</a>
-              <a href="#features" className="btn-secondary">Learn More</a>
+              {isAuthenticated ? (
+                <>
+                  <a href="/meal-planner" className="btn-primary">Start Planning</a>
+                  <a href="/inventory" className="btn-secondary">View Inventory</a>
+                </>
+              ) : (
+                <>
+                  <a href="/signup" className="btn-primary">Get Started Free</a>
+                  <a href="#features" className="btn-secondary">Learn More</a>
+                </>
+              )}
             </div>
           </div>
           <div className="hero-image">

@@ -19,12 +19,14 @@ function Landing() {
             </div>
             <span className="nav-logo-text">Smart Kitchen</span>
           </div>
-          <div className="nav-center-links">
-            <a href="#dashboard" className="nav-center-link">Dashboard</a>
-            <a href="/meal-planner" className="nav-center-link">Meal Planner</a>
-            <a href="/inventory" className="nav-center-link">Inventory</a>
-            <a href="/shopping-list" className="nav-center-link">Shopping List</a>
-          </div>
+          {isAuthenticated && (
+            <div className="nav-center-links">
+              <a href="#dashboard" className="nav-center-link">Dashboard</a>
+              <a href="/meal-planner" className="nav-center-link">Meal Planner</a>
+              <a href="/inventory" className="nav-center-link">Inventory</a>
+              <a href="/shopping-list" className="nav-center-link">Shopping List</a>
+            </div>
+          )}
           
           <div className="nav-buttons">
             {isAuthenticated ? (
@@ -63,15 +65,17 @@ function Landing() {
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="mobile-menu">
-            <a href="#dashboard" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Dashboard</a>
-            <a href="/meal-planner" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Meal Planner</a>
-            <a href="/inventory" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Inventory</a>
-            <a href="/shopping-list" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Shopping List</a>
-            <div className="mobile-menu-divider"></div>
             {isAuthenticated ? (
-              <div className="mobile-menu-user-section">
-                <UserMenu />
-              </div>
+              <>
+                <a href="#dashboard" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Dashboard</a>
+                <a href="/meal-planner" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Meal Planner</a>
+                <a href="/inventory" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Inventory</a>
+                <a href="/shopping-list" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Shopping List</a>
+                <div className="mobile-menu-divider"></div>
+                <div className="mobile-menu-user-section">
+                  <UserMenu />
+                </div>
+              </>
             ) : (
               <>
                 <a href="/login" className="mobile-menu-link" onClick={() => setMobileMenuOpen(false)}>Log In</a>

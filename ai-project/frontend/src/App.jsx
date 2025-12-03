@@ -6,6 +6,7 @@ import Signup from './components/Signup'
 import MealPlanner from './components/MealPlanner'
 import Inventory from './components/Inventory'
 import ShoppingList from './components/ShoppingList'
+import UserProfile from './components/UserProfile'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -63,6 +64,12 @@ function AppContent() {
         return (
           <ProtectedRoute>
             <ShoppingList />
+          </ProtectedRoute>
+        )
+      case 'profile':
+        return (
+          <ProtectedRoute>
+            <UserProfile />
           </ProtectedRoute>
         )
       case 'home':

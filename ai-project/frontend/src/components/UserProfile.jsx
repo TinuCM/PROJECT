@@ -83,25 +83,31 @@ function UserProfile() {
             </div>
             <a href="/" className="nav-logo-text">Smart Kitchen</a>
           </div>
-          <div className="nav-buttons">
-            <a href="/" className="back-to-home-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              Back to Home
-            </a>
-          </div>
         </div>
       </nav>
 
       {/* Main Content */}
       <div className="user-profile-content">
         <div className="user-profile-container">
+          {/* Back Button */}
+          <a href="/" className="back-to-home-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+          </a>
           
           {/* Header */}
           <div className="user-profile-header">
-            <h1 className="user-profile-title">User Profile</h1>
-            <p className="user-profile-subtitle">Manage your account settings and preferences</p>
+            <div className="user-profile-avatar-section">
+              <div className="user-profile-avatar">
+                {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <div className="user-profile-name-section">
+                <h1 className="user-profile-title">{user?.username || 'User'}</h1>
+                <p className="user-profile-subtitle">Manage your account settings and preferences</p>
+              </div>
+            </div>
           </div>
 
           {/* Dietary Restrictions & Allergies */}

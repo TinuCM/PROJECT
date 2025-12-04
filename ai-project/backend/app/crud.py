@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .auth import get_password_hash, verify_password
-from typing import Optional
+from typing import Optional, List
 
 def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()
@@ -25,4 +25,34 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_password(password, user.password_hash):
         return False
     return user
+
+# Inventory CRUD operations
+def get_inventory_items(db: Session, user_id: int) -> List[models.InventoryItem]:
+    return db.query(models.InventoryItem).filter(models.InventoryItem.user_id == user_id).order_by(models.InventoryItem.created_at.desc()).all()
+
+def create_inventory_item(db: Session, item: schemas.InventoryItemCreate, user_id: int) -> models.InventoryItem:
+    db_item = models.InventoryItem(
+        name=item.name,
+        quantity=item.quantity,
+        category=item.category,
+        user_id=user_id
+    )
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+def get_inventory_item(db: Session, item_id: int, user_id: int) -> Optional[models.InventoryItem]:
+    return db.query(models.InventoryItem).filter(
+        models.InventoryItem.id == item_id,
+        models.InventoryItem.user_id == user_id
+    ).first()
+
+def delete_inventory_item(db: Session, item_id: int, user_id: int) -> bool:
+    item = get_inventory_item(db, item_id, user_id)
+    if not item:
+        return False
+    db.delete(item)
+    db.commit()
+    return True
 

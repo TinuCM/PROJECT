@@ -11,6 +11,14 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="AI Shopping Assistant API")
 
+# Print registered routes on startup (for debugging)
+@app.on_event("startup")
+async def startup_event():
+    routes = [route.path for route in app.routes if hasattr(route, 'path')]
+    inventory_routes = [r for r in routes if 'inventory' in r]
+    print(f"[STARTUP] Inventory routes registered: {inventory_routes}")
+    print(f"[STARTUP] All API routes: {[r for r in routes if r.startswith('/api')]}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -52,6 +60,44 @@ def get_me(current_user: models.User = Depends(get_current_user)):
 def get_all_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
+
+# Inventory endpoints
+@app.get("/api/inventory", response_model=List[schemas.InventoryItemRead])
+def get_inventory(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    try:
+        items = crud.get_inventory_items(db, user_id=current_user.id)
+        return items
+    except Exception as e:
+        print(f"Error in get_inventory: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching inventory: {str(e)}"
+        )
+
+@app.post("/api/inventory", response_model=schemas.InventoryItemRead, status_code=status.HTTP_201_CREATED)
+def create_inventory_item(
+    item: schemas.InventoryItemCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return crud.create_inventory_item(db=db, item=item, user_id=current_user.id)
+
+@app.delete("/api/inventory/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_inventory_item(
+    item_id: int,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    success = crud.delete_inventory_item(db=db, item_id=item_id, user_id=current_user.id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found"
+        )
+    return None
 
 @app.get("/")
 def root():

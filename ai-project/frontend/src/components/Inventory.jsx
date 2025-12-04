@@ -1,22 +1,67 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
 import UserMenu from './UserMenu'
 
+const API_BASE_URL = 'http://localhost:8000'
+
 function Inventory() {
+  const { token } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [newItem, setNewItem] = useState({
     name: '',
     quantity: '',
     category: 'Pantry'
   })
-  const [items, setItems] = useState([
-    { id: 1, name: 'Organic Avocados', quantity: '2', stocked: '2 days ago' },
-    { id: 2, name: 'Sourdough Bread', quantity: '1 loaf', stocked: '1 day ago' },
-    { id: 3, name: 'Cherry Tomatoes', quantity: '1 pint', stocked: '4 days ago' },
-    { id: 4, name: 'Free-Range Eggs', quantity: '8 remaining', stocked: '5 days ago' },
-    { id: 5, name: 'Milk (2%)', quantity: '0.5 gallon', stocked: '3 days ago' },
-  ])
+
+  // Fetch inventory items from API
+  useEffect(() => {
+    if (token) {
+      fetchInventoryItems()
+    } else {
+      setLoading(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
+
+  const fetchInventoryItems = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch(`${API_BASE_URL}/api/inventory`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setItems(data || [])
+      } else if (response.status === 404) {
+        setError('Inventory endpoint not found (404). Please restart the backend server to load the new routes.')
+        console.error('404 Error - Backend server may need to be restarted. Make sure you ran: uvicorn app.main:app --reload')
+      } else if (response.status === 401) {
+        setError('Authentication failed. Please log in again.')
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: `HTTP ${response.status}` }))
+        console.error('Failed to fetch inventory:', response.status, errorData)
+        setError(`Failed to fetch inventory items: ${errorData.detail || `HTTP ${response.status}`}`)
+      }
+    } catch (err) {
+      console.error('Error fetching inventory:', err)
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setError(`Cannot connect to backend server at ${API_BASE_URL}. Please make sure the backend server is running. Start it with: cd ai-project/backend && uvicorn app.main:app --reload`)
+      } else {
+        setError(`Error loading inventory items: ${err.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleVoiceInput = () => {
     console.log('Voice input activated')
@@ -31,17 +76,81 @@ function Inventory() {
     setNewItem({ name: '', quantity: '', category: 'Pantry' })
   }
 
-  const handleSubmitItem = (e) => {
+  const handleSubmitItem = async (e) => {
     e.preventDefault()
     if (newItem.name && newItem.quantity) {
-      const newItemEntry = {
-        id: items.length + 1,
-        name: newItem.name,
-        quantity: newItem.quantity,
-        stocked: 'Just now'
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/inventory`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(newItem)
+        })
+
+        if (response.ok) {
+          const createdItem = await response.json()
+          setItems([createdItem, ...items])
+          setError(null)
+          handleCloseModal()
+        } else if (response.status === 404) {
+          setError('Inventory endpoint not found (404). Please restart the backend server to load the new routes.')
+          console.error('404 Error - Backend server may need to be restarted')
+        } else {
+          const errorData = await response.json().catch(() => ({ detail: `HTTP ${response.status}` }))
+          console.error('Failed to add item:', response.status, errorData)
+          setError(`Failed to add item: ${errorData.detail || `HTTP ${response.status}`}`)
+        }
+      } catch (err) {
+        console.error('Error adding item:', err)
+        setError(`Error adding item to inventory: ${err.message}. Make sure the backend server is running on ${API_BASE_URL}`)
       }
-      setItems([newItemEntry, ...items])
-      handleCloseModal()
+    }
+  }
+
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) {
+      return
+    }
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/inventory/${itemId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.ok) {
+        setItems(items.filter(item => item.id !== itemId))
+        setError(null)
+      } else {
+        setError('Failed to delete item')
+      }
+    } catch (err) {
+      console.error('Error deleting item:', err)
+      setError('Error deleting item')
+    }
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now - date)
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    
+    if (diffDays === 0) {
+      const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
+      if (diffHours === 0) {
+        const diffMinutes = Math.floor(diffTime / (1000 * 60))
+        return diffMinutes <= 1 ? 'Just now' : `${diffMinutes} minutes ago`
+      }
+      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`
+    } else if (diffDays === 1) {
+      return '1 day ago'
+    } else {
+      return `${diffDays} days ago`
     }
   }
 
@@ -171,10 +280,38 @@ function Inventory() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div style={{ 
+              padding: '12px 16px', 
+              backgroundColor: '#fee2e2', 
+              color: '#991b1b', 
+              borderRadius: '8px', 
+              marginBottom: '20px' 
+            }}>
+              {error}
+              <button 
+                onClick={() => setError(null)}
+                style={{ 
+                  float: 'right', 
+                  background: 'none', 
+                  border: 'none', 
+                  color: '#991b1b', 
+                  cursor: 'pointer',
+                  fontSize: '18px'
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
           {/* Inventory Table */}
           <div className="inventory-table-section">
             <div className="inventory-table-header">
-              <h2 className="current-stock-title">Current Stock ({items.length} items)</h2>
+              <h2 className="current-stock-title">
+                {loading ? 'Loading...' : `Current Stock (${items.length} items)`}
+              </h2>
               <div className="table-controls">
                 <button className="table-control-btn">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -210,22 +347,43 @@ function Inventory() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id} className="table-row">
-                      <td className="table-cell item-name-cell">{item.name}</td>
-                      <td className="table-cell">{item.quantity}</td>
-                      <td className="table-cell stocked-cell">{item.stocked}</td>
-                      <td className="table-cell actions-cell">
-                        <button className="action-btn">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="1"/>
-                            <circle cx="12" cy="5" r="1"/>
-                            <circle cx="12" cy="19" r="1"/>
-                          </svg>
-                        </button>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: 'center', padding: '40px' }}>
+                        Loading inventory items...
                       </td>
                     </tr>
-                  ))}
+                  ) : items.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                        No items in inventory. Click "Add Item" to get started!
+                      </td>
+                    </tr>
+                  ) : (
+                    items
+                      .filter(item => 
+                        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.quantity.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map((item) => (
+                        <tr key={item.id} className="table-row">
+                          <td className="table-cell item-name-cell">{item.name}</td>
+                          <td className="table-cell">{item.quantity}</td>
+                          <td className="table-cell stocked-cell">{formatDate(item.created_at)}</td>
+                          <td className="table-cell actions-cell">
+                            <button 
+                              className="action-btn"
+                              onClick={() => handleDeleteItem(item.id)}
+                              title="Delete item"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  )}
                 </tbody>
               </table>
             </div>

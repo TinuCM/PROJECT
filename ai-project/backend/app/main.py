@@ -53,6 +53,36 @@ def get_all_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
 
+# Inventory endpoints
+@app.post("/api/inventory", response_model=schemas.InventoryItemRead, status_code=status.HTTP_201_CREATED)
+def create_inventory_item(
+    item: schemas.InventoryItemCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return crud.create_inventory_item(db=db, item=item, user_id=current_user.id)
+
+@app.get("/api/inventory", response_model=List[schemas.InventoryItemRead])
+def get_inventory_items(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return crud.get_user_inventory_items(db=db, user_id=current_user.id)
+
+@app.delete("/api/inventory/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_inventory_item(
+    item_id: int,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    success = crud.delete_inventory_item(db=db, item_id=item_id, user_id=current_user.id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found or you don't have permission to delete it"
+        )
+    return None
+
 @app.get("/")
 def root():
     return {"message": "AI Shopping Assistant API is running"}
